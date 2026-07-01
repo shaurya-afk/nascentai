@@ -1,6 +1,6 @@
 "use client";
 
-import { Send, Sparkles } from "lucide-react";
+import { Send, Terminal } from "lucide-react";
 import Button from "@/app/components/ui/Button";
 import { cn } from "@/app/lib/utils";
 
@@ -19,7 +19,7 @@ export default function PromptInput({
   onChange,
   onSubmit,
   loading,
-  placeholder = "Describe the changes you want to make…",
+  placeholder = "Describe the changes you want to make in this codebase...",
   label = "What would you like to build?",
   className,
 }: PromptInputProps) {
@@ -31,28 +31,28 @@ export default function PromptInput({
   };
 
   return (
-    <div className={cn("rounded-xl border border-border bg-surface overflow-hidden", className)}>
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-border bg-surface-elevated">
-        <Sparkles className="h-4 w-4 text-accent" />
-        <span className="text-sm font-medium">{label}</span>
+    <div className={cn("rounded-lg border border-border bg-surface p-6 shadow-xl animate-fade-in", className)}>
+      <div className="flex items-center gap-2 mb-4">
+        <Terminal className="h-4.5 w-4.5 text-neutral-400" />
+        <span className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">{label}</span>
       </div>
-      <div className="p-4">
+      <div>
         <textarea
           value={value}
           onChange={(e) => onChange(e.target.value)}
           onKeyDown={handleKeyDown}
           placeholder={placeholder}
-          rows={5}
+          rows={6}
           disabled={loading}
-          className="w-full resize-none bg-transparent text-sm text-foreground placeholder:text-muted focus:outline-none disabled:opacity-50"
+          className="w-full resize-none rounded-lg border border-border bg-black p-4 text-sm text-white placeholder:text-neutral-500 focus:outline-none focus:border-neutral-500 transition-colors disabled:opacity-50 leading-relaxed font-sans"
         />
-        <div className="mt-4 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-3">
-          <p className="text-xs text-muted">
-            Press <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px]">⌘</kbd>+
-            <kbd className="rounded border border-border px-1.5 py-0.5 font-mono text-[10px]">Enter</kbd> to submit
+        <div className="mt-4 flex flex-col-reverse sm:flex-row sm:items-center sm:justify-between gap-4">
+          <p className="text-xs text-neutral-500 font-medium">
+            Press <kbd className="rounded border border-border bg-neutral-900 px-1.5 py-0.5 font-mono text-[10px] text-neutral-400">⌘</kbd>+
+            <kbd className="rounded border border-border bg-neutral-900 px-1.5 py-0.5 font-mono text-[10px] text-neutral-400">Enter</kbd> to submit request
           </p>
-          <Button onClick={onSubmit} loading={loading} disabled={!value.trim()}>
-            <Send className="h-4 w-4" />
+          <Button onClick={onSubmit} loading={loading} disabled={!value.trim()} variant="primary" className="py-2.5 px-5">
+            <Send className="h-3.5 w-3.5 mr-1.5" />
             Generate Plan
           </Button>
         </div>

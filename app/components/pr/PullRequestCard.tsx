@@ -16,41 +16,43 @@ export default function PullRequestCard({ result, repoName }: PullRequestCardPro
   const deletions = result.diff?.summary.deletions ?? 0;
 
   return (
-    <div className="rounded-xl border border-success/30 bg-success-bg/30 overflow-hidden animate-fade-in">
-      <div className="flex items-center gap-2 px-4 py-3 border-b border-success/20 bg-success/5">
-        <GitPullRequest className="h-5 w-5 text-success" />
-        <h3 className="text-sm font-semibold text-success">Pull Request Created</h3>
-        <Badge variant="success" className="ml-auto">Open</Badge>
+    <div className="rounded-lg border border-border bg-surface overflow-hidden animate-fade-in">
+      <div className="flex items-center gap-3 px-6 py-4 border-b border-border bg-neutral-900/40">
+        <GitPullRequest className="h-5 w-5 text-white" />
+        <h3 className="text-xs font-bold text-white uppercase tracking-widest">Pull Request Created</h3>
+        <Badge variant="success" className="ml-auto text-[10px] font-bold uppercase tracking-wider py-0">Open</Badge>
       </div>
 
-      <div className="p-6 space-y-5">
+      <div className="p-6 space-y-6">
         <div>
-          <p className="text-lg font-semibold">{result.plan?.summary ?? "Pull Request"}</p>
+          <p className="text-xl font-bold text-white tracking-tight leading-snug">{result.plan?.summary ?? "Pull Request"}</p>
           {result.user_query && (
-            <p className="mt-2 text-sm text-muted leading-relaxed">{result.user_query}</p>
+            <p className="mt-3 text-sm text-neutral-400 leading-relaxed font-normal">{result.user_query}</p>
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-2">
           <InfoItem icon={FolderGit2} label="Repository" value={repoName} />
           <InfoItem icon={GitBranch} label="Source Branch" value={result.branch_name ?? "—"} />
           <InfoItem icon={GitBranch} label="Target Branch" value="main" />
           <InfoItem icon={GitPullRequest} label="Files Changed" value={String(filesChanged)} />
         </div>
 
-        <div className="flex flex-wrap gap-2">
-          <Badge variant="success">+{additions} additions</Badge>
-          <Badge variant="danger">−{deletions} deletions</Badge>
+        <div className="flex flex-wrap gap-2 pt-4 border-t border-border/60">
+          <Badge variant="success" className="text-[10px] font-mono py-0.5 px-2">+{additions} lines</Badge>
+          <Badge variant="danger" className="text-[10px] font-mono py-0.5 px-2">−{deletions} lines</Badge>
         </div>
 
         {result.pull_request_url && (
-          <Button
-            className="w-full sm:w-auto"
-            onClick={() => window.open(result.pull_request_url, "_blank")}
-          >
-            <ExternalLink className="h-4 w-4" />
-            Open on GitHub
-          </Button>
+          <div className="pt-4">
+            <Button
+              className="w-full sm:w-auto py-3 px-5 font-semibold text-xs"
+              onClick={() => window.open(result.pull_request_url, "_blank")}
+            >
+              <ExternalLink className="h-4 w-4 mr-1.5" />
+              Open on GitHub
+            </Button>
+          </div>
         )}
       </div>
     </div>
@@ -67,11 +69,11 @@ function InfoItem({
   value: string;
 }) {
   return (
-    <div className="flex items-start gap-2">
-      <Icon className="h-4 w-4 text-muted mt-0.5" />
-      <div>
-        <p className="text-xs text-muted">{label}</p>
-        <p className="text-sm font-medium font-mono">{value}</p>
+    <div className="flex items-start gap-3">
+      <Icon className="h-4.5 w-4.5 text-neutral-500 mt-0.5 shrink-0" />
+      <div className="min-w-0">
+        <p className="text-[10px] text-neutral-500 uppercase tracking-wider font-semibold">{label}</p>
+        <p className="text-sm font-semibold text-white mt-1 truncate font-mono">{value}</p>
       </div>
     </div>
   );

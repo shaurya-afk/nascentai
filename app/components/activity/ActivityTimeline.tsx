@@ -24,7 +24,7 @@ interface ActivityTimelineProps {
 
 export default function ActivityTimeline({ events }: ActivityTimelineProps) {
   if (events.length === 0) {
-    return <p className="text-sm text-muted py-4">No recent activity</p>;
+    return <p className="text-xs text-neutral-500 py-6 text-center italic">No recent activity</p>;
   }
 
   return (
@@ -33,25 +33,25 @@ export default function ActivityTimeline({ events }: ActivityTimelineProps) {
         const Icon = iconMap[event.type] ?? Play;
         const isLast = i === events.length - 1;
         return (
-          <div key={event.id} className="flex gap-3 animate-fade-in">
+          <div key={event.id} className="flex gap-4 animate-fade-in">
             <div className="flex flex-col items-center">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-elevated border border-border">
-                <Icon className="h-4 w-4 text-muted" />
+              <div className="flex h-7 w-7 items-center justify-center rounded-full bg-neutral-900 border border-border">
+                <Icon className="h-3.5 w-3.5 text-neutral-400" />
               </div>
-              {!isLast && <div className="w-px flex-1 bg-border my-1 min-h-[16px]" />}
+              {!isLast && <div className="w-px flex-1 bg-border my-1.5 min-h-[24px]" />}
             </div>
-            <div className="pb-5 min-w-0 flex-1">
-              <div className="flex items-baseline justify-between gap-2">
-                <p className="text-sm font-medium">{event.title}</p>
-                <span className="text-xs text-muted shrink-0">
+            <div className="pb-6 min-w-0 flex-1">
+              <div className="flex items-baseline justify-between gap-3">
+                <p className="text-sm font-semibold text-white">{event.title}</p>
+                <span className="text-[10px] text-neutral-500 font-mono shrink-0">
                   {formatRelativeTime(event.timestamp)}
                 </span>
               </div>
               {event.description && (
-                <p className="mt-0.5 text-xs text-muted line-clamp-2">{event.description}</p>
+                <p className="mt-1 text-xs text-neutral-400 leading-relaxed">{event.description}</p>
               )}
               {event.repoName && (
-                <p className="mt-1 text-xs text-accent">{event.repoName}</p>
+                <p className="mt-1 text-xs text-neutral-500 font-mono">{event.repoName}</p>
               )}
             </div>
           </div>

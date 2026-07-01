@@ -7,7 +7,6 @@ import {
   FolderGit2,
   History,
   Settings,
-  Sparkles,
   Menu,
   X,
 } from "lucide-react";
@@ -29,17 +28,23 @@ export default function Sidebar() {
 
   const NavContent = () => (
     <>
-      <div className="flex items-center gap-2.5 px-4 py-5 border-b border-border">
-        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent/20 text-accent">
-          <Sparkles className="h-4 w-4" />
+      {/* Brand Header */}
+      <div className="flex items-center gap-3 px-5 py-6 border-b border-border">
+        <div className="flex h-7 w-7 items-center justify-center text-white">
+          <img
+            src="/lotus.svg"
+            alt="Nascent"
+            className="h-6 w-6"
+          />
         </div>
         <div>
-          <p className="text-sm font-semibold tracking-tight">Nascent</p>
-          <p className="text-xs text-muted">AI Engineering</p>
+          <p className="text-base font-bold tracking-tight text-white leading-none">Nascent</p>
+          <p className="text-[10px] uppercase tracking-wider text-neutral-500 mt-1 font-medium">AI Software Engineer</p>
         </div>
       </div>
 
-      <nav className="flex-1 px-3 py-4 space-y-1">
+      {/* Nav List */}
+      <nav className="flex-1 px-3 py-6 space-y-1.5">
         {navItems.map(({ href, label, icon: Icon }) => {
           const active = pathname === href || pathname.startsWith(`${href}/`);
           return (
@@ -48,29 +53,30 @@ export default function Sidebar() {
               href={href}
               onClick={() => setMobileOpen(false)}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-150",
                 active
-                  ? "bg-accent/10 text-accent"
-                  : "text-muted hover:bg-surface-elevated hover:text-foreground"
+                  ? "bg-hover text-white border border-border/40"
+                  : "text-neutral-400 hover:bg-hover hover:text-white border border-transparent"
               )}
             >
-              <Icon className="h-4 w-4 shrink-0" />
+              <Icon className="h-4 w-4 shrink-0 text-neutral-400" />
               {label}
             </Link>
           );
         })}
       </nav>
 
+      {/* User Profile Footer */}
       {user && (
-        <div className="border-t border-border p-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-surface-elevated text-xs font-bold">
+        <div className="border-t border-border p-4 bg-black/20">
+          <div className="flex items-center gap-3 p-1.5 rounded-lg border border-transparent">
+            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-neutral-900 border border-border text-xs font-semibold text-neutral-200">
               {user.github_username.slice(0, 2).toUpperCase()}
             </div>
             <div className="min-w-0 flex-1">
-              <p className="truncate text-sm font-medium">{user.github_username}</p>
-              <p className="truncate text-xs text-muted">
-                {user.github_installation_id ? "GitHub connected" : "App not installed"}
+              <p className="truncate text-sm font-semibold text-white leading-none">{user.github_username}</p>
+              <p className="truncate text-[10px] text-neutral-500 mt-1 uppercase tracking-wider">
+                {user.github_installation_id ? "Active Developer" : "Setup Required"}
               </p>
             </div>
           </div>
@@ -91,10 +97,10 @@ export default function Sidebar() {
 
       {mobileOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/60" onClick={() => setMobileOpen(false)} />
+          <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={() => setMobileOpen(false)} />
           <aside className="relative flex h-full w-[var(--sidebar-width)] flex-col bg-surface border-r border-border">
             <button
-              className="absolute top-4 right-4 text-muted hover:text-foreground"
+              className="absolute top-4 right-4 text-neutral-400 hover:text-white"
               onClick={() => setMobileOpen(false)}
             >
               <X className="h-5 w-5" />

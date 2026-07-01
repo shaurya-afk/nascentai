@@ -24,28 +24,28 @@ export default function ThreadCard({ thread, compact }: ThreadCardProps) {
   return (
     <Link
       href={href}
-      className="group block rounded-xl border border-border bg-surface p-4 transition-all hover:border-accent/40 hover:bg-surface-elevated animate-fade-in"
+      className="group block rounded-lg border border-border bg-surface p-6 transition-all duration-200 hover:border-neutral-500 hover:bg-hover animate-fade-in"
     >
-      <div className="flex items-start justify-between gap-3">
+      <div className="flex items-start justify-between gap-4">
         <div className="min-w-0 flex-1">
-          <div className="flex items-center gap-2 mb-1">
-            <MessageSquare className="h-4 w-4 text-muted shrink-0" />
-            <span className="text-xs text-muted truncate">{thread.repoName}</span>
+          <div className="flex items-center gap-2 mb-2">
+            <MessageSquare className="h-4 w-4 text-neutral-500 shrink-0" />
+            <span className="text-xs text-neutral-400 font-mono truncate">{thread.repoName}</span>
           </div>
-          <p className={compact ? "text-sm font-medium truncate" : "text-sm font-medium line-clamp-2"}>
-            {truncate(thread.userPrompt, compact ? 80 : 160)}
+          <p className={`font-semibold text-white tracking-tight leading-snug ${compact ? "text-sm truncate" : "text-base line-clamp-2"}`}>
+            {truncate(thread.userPrompt, compact ? 85 : 180)}
           </p>
         </div>
-        {statusBadge(thread)}
+        <div className="shrink-0">{statusBadge(thread)}</div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between text-xs text-muted">
-        <span className="flex items-center gap-1">
-          <Clock className="h-3 w-3" />
+      <div className="mt-6 pt-4 border-t border-border/40 flex items-center justify-between text-xs text-neutral-500">
+        <span className="flex items-center gap-1.5">
+          <Clock className="h-3.5 w-3.5" />
           {formatRelativeTime(thread.updatedAt)}
         </span>
-        <span className="flex items-center gap-1 text-accent opacity-0 group-hover:opacity-100 transition-opacity">
-          Continue <ArrowRight className="h-3 w-3" />
+        <span className="flex items-center gap-1 text-white opacity-0 group-hover:opacity-100 transition-all duration-200 transform translate-x-1 group-hover:translate-x-0 font-medium">
+          Open thread <ArrowRight className="h-3.5 w-3.5" />
         </span>
       </div>
     </Link>

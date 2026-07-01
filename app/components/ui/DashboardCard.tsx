@@ -14,22 +14,22 @@ export default function DashboardCard({
   icon,
 }: DashboardCardProps) {
   return (
-    <div className="rounded-xl border border-neutral-200 bg-white p-6 shadow-sm transition hover:shadow-md">
+    <div className="rounded-lg border border-border bg-surface p-6 transition duration-200 hover:border-neutral-500">
       <div className="flex items-start justify-between">
         <div>
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs font-medium uppercase tracking-wider text-neutral-500">
             {title}
           </p>
 
-          <h2 className="mt-2 text-3xl font-bold text-neutral-900">
+          <h2 className="mt-2 text-3xl font-semibold tracking-tight text-white">
             {value}
           </h2>
         </div>
 
-        {icon}
+        {icon && <div className="text-neutral-400">{icon}</div>}
       </div>
 
-      <p className="mt-4 text-sm text-neutral-500">
+      <p className="mt-4 text-sm text-neutral-400">
         {description}
       </p>
     </div>

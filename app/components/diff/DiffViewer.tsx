@@ -36,18 +36,20 @@ function DiffFileHeader({
   return (
     <button
       onClick={onToggle}
-      className="flex w-full items-center gap-2 px-4 py-2.5 text-left hover:bg-surface-elevated transition-colors"
+      className="flex w-full items-center gap-3 px-5 py-3 text-left hover:bg-neutral-900 transition-colors duration-200"
     >
       {expanded ? (
-        <ChevronDown className="h-4 w-4 text-muted shrink-0" />
+        <ChevronDown className="h-4 w-4 text-neutral-400 shrink-0" />
       ) : (
-        <ChevronRight className="h-4 w-4 text-muted shrink-0" />
+        <ChevronRight className="h-4 w-4 text-neutral-400 shrink-0" />
       )}
-      <FileCode2 className="h-4 w-4 text-muted shrink-0" />
-      <span className="font-mono text-sm truncate flex-1">{file.path}</span>
-      <Badge variant={statusVariant}>{file.status}</Badge>
-      <span className="text-xs text-success font-mono">+{file.additions}</span>
-      <span className="text-xs text-danger font-mono">−{file.deletions}</span>
+      <FileCode2 className="h-4 w-4 text-neutral-400 shrink-0" />
+      <span className="font-mono text-sm font-medium text-white truncate flex-1">{file.path}</span>
+      <div className="flex items-center gap-2 shrink-0">
+        <Badge variant={statusVariant} className="text-[10px] font-mono py-0">{file.status}</Badge>
+        <span className="text-xs text-neutral-300 font-mono">+{file.additions}</span>
+        <span className="text-xs text-neutral-500 font-mono">−{file.deletions}</span>
+      </div>
     </button>
   );
 }
@@ -74,12 +76,12 @@ function DiffFileContent({ file }: { file: ParsedDiffFile }) {
 
   return (
     <div className="border-t border-border">
-      <div className="flex items-center justify-end gap-2 px-4 py-1.5 bg-surface-elevated border-b border-border">
+      <div className="flex items-center justify-end gap-2 px-5 py-2 bg-neutral-900/60 border-b border-border">
         <button
           onClick={handleCopy}
-          className="flex items-center gap-1.5 text-xs text-muted hover:text-foreground transition-colors"
+          className="flex items-center gap-1.5 text-xs text-neutral-400 hover:text-white transition-colors"
         >
-          {copied ? <Check className="h-3.5 w-3.5 text-success" /> : <Copy className="h-3.5 w-3.5" />}
+          {copied ? <Check className="h-3.5 w-3.5 text-white" /> : <Copy className="h-3.5 w-3.5" />}
           {copied ? "Copied" : "Copy diff"}
         </button>
       </div>
@@ -88,8 +90,9 @@ function DiffFileContent({ file }: { file: ParsedDiffFile }) {
           <tbody>
             {file.hunks.map((hunk, hi) => (
               <Fragment key={`hunk-${hi}`}>
-                <tr className="bg-accent/5">
-                  <td colSpan={3} className="px-4 py-1 text-accent/80 select-none">
+                {/* Hunk Header */}
+                <tr className="bg-neutral-950/60">
+                  <td colSpan={3} className="px-5 py-1.5 text-neutral-500 select-none border-b border-border/40 text-[10px]">
                     {hunk.header}
                   </td>
                 </tr>
@@ -97,21 +100,26 @@ function DiffFileContent({ file }: { file: ParsedDiffFile }) {
                   <tr
                     key={`${hi}-${li}`}
                     className={cn(
-                      line.type === "addition" && "bg-success-bg",
-                      line.type === "deletion" && "bg-danger-bg"
+                      "group hover:bg-neutral-900/30",
+                      line.type === "addition" && "bg-neutral-800/40",
+                      line.type === "deletion" && "bg-neutral-950/70"
                     )}
                   >
-                    <td className="w-10 px-2 py-0 text-right text-muted select-none border-r border-border/50">
+                    {/* Line numbers */}
+                    <td className="w-10 px-3 py-0 text-right text-neutral-600 select-none border-r border-border/40 text-[10px]">
                       {line.oldLineNumber ?? ""}
                     </td>
-                    <td className="w-10 px-2 py-0 text-right text-muted select-none border-r border-border/50">
+                    <td className="w-10 px-3 py-0 text-right text-neutral-600 select-none border-r border-border/40 text-[10px]">
                       {line.newLineNumber ?? ""}
                     </td>
-                    <td className="px-4 py-0 whitespace-pre">
+                    
+                    {/* Line content */}
+                    <td className="px-5 py-0 whitespace-pre">
                       <span
                         className={cn(
-                          line.type === "addition" && "text-success",
-                          line.type === "deletion" && "text-danger"
+                          "font-mono text-xs text-neutral-300",
+                          line.type === "addition" && "text-white font-semibold",
+                          line.type === "deletion" && "text-neutral-500 line-through"
                         )}
                       >
                         {line.type === "addition" ? "+" : line.type === "deletion" ? "−" : " "}
@@ -160,17 +168,19 @@ function DiffSection({
   };
 
   return (
-    <div className="rounded-xl border border-border bg-surface overflow-hidden">
+    <div className="rounded-lg border border-border bg-surface overflow-hidden">
       <button
         onClick={() => setSectionOpen(!sectionOpen)}
-        className="flex w-full items-center gap-3 px-4 py-3 bg-surface-elevated border-b border-border hover:bg-border-muted transition-colors"
+        className="flex w-full items-center gap-3 px-5 py-3.5 bg-neutral-900/30 border-b border-border hover:bg-neutral-900 transition-colors duration-200"
       >
-        {sectionOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-        <Icon className="h-4 w-4 text-muted" />
-        <span className="text-sm font-semibold flex-1 text-left">{title}</span>
-        <Badge variant="muted">{files.length} files</Badge>
-        <span className="text-xs text-success font-mono">+{totalAdd}</span>
-        <span className="text-xs text-danger font-mono">−{totalDel}</span>
+        {sectionOpen ? <ChevronDown className="h-4 w-4 text-neutral-400" /> : <ChevronRight className="h-4 w-4 text-neutral-400" />}
+        <Icon className="h-4 w-4 text-neutral-400" />
+        <span className="text-sm font-semibold flex-1 text-left text-white">{title}</span>
+        <div className="flex items-center gap-3 shrink-0">
+          <Badge variant="muted" className="text-[10px] font-mono py-0">{files.length} files</Badge>
+          <span className="text-xs text-neutral-300 font-mono">+{totalAdd}</span>
+          <span className="text-xs text-neutral-500 font-mono">−{totalDel}</span>
+        </div>
       </button>
       {sectionOpen && (
         <div className="divide-y divide-border">
@@ -195,22 +205,22 @@ export default function DiffViewer({ patch, className }: DiffViewerProps) {
 
   if (parsed.files.length === 0) {
     return (
-      <div className={cn("rounded-xl border border-border bg-surface p-8 text-center text-sm text-muted", className)}>
+      <div className={cn("rounded-lg border border-border bg-surface p-12 text-center text-sm text-neutral-550", className)}>
         No changes to display
       </div>
     );
   }
 
   return (
-    <div className={cn("space-y-4 animate-fade-in", className)}>
-      <div className="flex flex-wrap items-center gap-3 rounded-xl border border-border bg-surface px-4 py-3">
-        <span className="text-sm font-medium">{parsed.files.length} files changed</span>
-        <span className="flex items-center gap-1 text-sm text-success">
-          <Plus className="h-3.5 w-3.5" />
+    <div className={cn("space-y-6 animate-fade-in", className)}>
+      <div className="flex flex-wrap items-center gap-4 rounded-lg border border-border bg-surface px-5 py-3.5">
+        <span className="text-sm font-semibold text-white">{parsed.files.length} files changed</span>
+        <span className="flex items-center gap-1 text-sm text-neutral-300">
+          <Plus className="h-4 w-4" />
           {parsed.totalAdditions} additions
         </span>
-        <span className="flex items-center gap-1 text-sm text-danger">
-          <Minus className="h-3.5 w-3.5" />
+        <span className="flex items-center gap-1 text-sm text-neutral-500">
+          <Minus className="h-4 w-4" />
           {parsed.totalDeletions} deletions
         </span>
       </div>
@@ -225,14 +235,14 @@ export default function DiffViewer({ patch, className }: DiffViewerProps) {
 export function FullFileViewer({ path, content }: { path: string; content: string }) {
   const language = getLanguageFromPath(path);
   return (
-    <div className="rounded-xl border border-border overflow-hidden">
-      <div className="px-4 py-2 bg-surface-elevated border-b border-border font-mono text-xs">
+    <div className="rounded-lg border border-border overflow-hidden">
+      <div className="px-5 py-2.5 bg-neutral-900 border-b border-border font-mono text-xs text-neutral-300">
         {path}
       </div>
       <SyntaxHighlighter
         language={language}
         style={oneDark}
-        customStyle={{ margin: 0, padding: "1rem", background: "#0d1117", fontSize: "12px" }}
+        customStyle={{ margin: 0, padding: "1.25rem", background: "#090909", fontSize: "12px" }}
         showLineNumbers
       >
         {content}

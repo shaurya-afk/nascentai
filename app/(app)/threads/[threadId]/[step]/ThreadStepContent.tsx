@@ -21,7 +21,7 @@ import { threadStorageService } from "@/app/services/threadStorage.service";
 import { repositoryService } from "@/app/services/repository.service";
 import type { ThreadStep } from "@/app/types/thread";
 import { useAuth } from "@/app/contexts/AuthContext";
-import { CheckCircle2, XCircle, RotateCcw } from "lucide-react";
+import { CheckCircle2, XCircle, RotateCcw, FolderGit2, Info, Terminal } from "lucide-react";
 
 const VALID_STEPS: ThreadStep[] = ["prompt", "execution", "plan", "diff", "commit", "pr"];
 
@@ -103,9 +103,9 @@ export default function ThreadStepContent({
     return (
       <>
         <Header title="Thread" description="Loading thread…" />
-        <div className="rounded-xl border border-border bg-surface p-8 text-center text-muted">
+        <div className="rounded-lg border border-border bg-surface p-12 text-center text-neutral-400">
           Thread not found.{" "}
-          <Link href="/repositories" className="text-accent hover:underline">
+          <Link href="/repositories" className="text-white font-semibold hover:underline">
             Select a repository
           </Link>
         </div>
@@ -131,143 +131,255 @@ export default function ThreadStepContent({
         </div>
       )}
 
-      {step === "prompt" && (
-        <div className="max-w-3xl mx-auto space-y-4">
-          <div className="rounded-xl border border-border bg-surface p-4 text-sm">
-            <span className="text-muted">Repository: </span>
-            <Link
-              href={`/repositories/${owner}/${repo}`}
-              className="text-accent hover:underline font-mono"
-            >
-              {thread.repoUrl}
-            </Link>
-          </div>
-          <PromptInput
-            value={prompt}
-            onChange={setPrompt}
-            onSubmit={handleStart}
-            loading={loading}
-          />
-        </div>
-      )}
-
-      {step === "execution" && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <ProgressTimeline
-              currentStage={stageInfo.currentStage}
-              stageStatuses={stageInfo.statuses}
-            />
-          </div>
-          <div className="rounded-xl border border-border bg-surface p-4">
-            <h3 className="text-sm font-semibold mb-3">Current Task</h3>
-            <p className="text-sm text-muted leading-relaxed">{thread.userPrompt}</p>
-            {thread.executionStatus === "running" && (
-              <div className="mt-4 flex items-center gap-2 text-sm text-accent">
-                <span className="h-2 w-2 rounded-full bg-accent animate-pulse-soft" />
-                Agent is working…
+      {/* Main Cursor-meets-Linear Layout Grid */}
+      <div className="grid grid-cols-1 xl:grid-cols-4 gap-8 items-start mt-8">
+        
+        {/* Left Side: Conversation & Feedback Panel */}
+        <div className="xl:col-span-1 space-y-6">
+          <div className="rounded-lg border border-border bg-surface p-6">
+            <div className="flex items-center gap-2 mb-4">
+              <Terminal className="h-4.5 w-4.5 text-neutral-400" />
+              <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Conversation</h3>
+            </div>
+            
+            {thread.userPrompt ? (
+              <div className="space-y-4">
+                <div className="p-4 bg-black rounded-lg border border-border">
+                  <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2 font-semibold">Prompt Request</p>
+                  <p className="text-sm text-white font-medium leading-relaxed break-words">{thread.userPrompt}</p>
+                </div>
+                {thread.planPayload?.message && (
+                  <div className="p-4 bg-neutral-900/40 rounded-lg border border-border">
+                    <p className="text-[10px] font-mono text-neutral-500 uppercase tracking-wider mb-2 font-semibold">AI Assistant</p>
+                    <p className="text-xs text-neutral-300 leading-relaxed">{thread.planPayload.message}</p>
+                  </div>
+                )}
               </div>
-            )}
-            {thread.currentStep !== "execution" && thread.currentStep !== "prompt" && (
-              <Button
-                className="mt-4 w-full"
-                onClick={() => router.push(`/threads/${threadId}/${thread.currentStep}`)}
-              >
-                Continue to {thread.currentStep}
-              </Button>
+            ) : (
+              <p className="text-xs text-neutral-500 italic">Describe your engineering request in the input field to initiate work.</p>
             )}
           </div>
-        </div>
-      )}
 
-      {step === "plan" && thread.plan && (
-        <div className="space-y-6 max-w-4xl">
-          {thread.planPayload?.message && (
-            <p className="text-sm text-muted">{thread.planPayload.message}</p>
-          )}
-          <PlanCard plan={thread.plan} />
-          <div className="flex flex-col sm:flex-row gap-3 sticky bottom-4 bg-background/80 backdrop-blur-sm p-4 rounded-xl border border-border">
-            <Button onClick={handleApprove} loading={loading} className="flex-1">
-              <CheckCircle2 className="h-4 w-4" />
-              Approve Plan
-            </Button>
-            <Button
-              variant="danger"
-              className="flex-1"
-              onClick={() => {
-                setRejectType("plan");
-                setRejectOpen(true);
-              }}
-              disabled={loading}
-            >
-              <XCircle className="h-4 w-4" />
-              Reject Plan
-            </Button>
+          {/* Quick instructions / Help */}
+          <div className="rounded-lg border border-border bg-surface p-6">
+            <div className="flex items-center gap-2 mb-3">
+              <Info className="h-4 w-4 text-neutral-400" />
+              <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Step Guidance</h3>
+            </div>
+            <p className="text-xs text-neutral-400 leading-relaxed">
+              {step === "prompt" && "Input the feature description or issue you'd like Nascent to resolve. Be as specific as possible."}
+              {step === "execution" && "The repository agent is running static analysis tools to locate files and construct the plan."}
+              {step === "plan" && "Review the list of proposed modifications. Verify file creation, editing, or structural deletions."}
+              {step === "diff" && "Inspect side-by-side or unified diff segments. Confirm code behavior satisfies requirements."}
+              {step === "commit" && "The branches and commit have been written locally. Proceed to register the Pull Request."}
+              {step === "pr" && "The workflow is successfully completed. Review code or merge branches directly on GitHub."}
+            </p>
           </div>
         </div>
-      )}
 
-      {step === "diff" && thread.diffPayload && (
-        <div className="space-y-6">
-          {thread.diffPayload.message && (
-            <p className="text-sm text-muted">{thread.diffPayload.message}</p>
+        {/* Center Panel: Plan, Diffs, Code View */}
+        <div className="xl:col-span-2 space-y-6">
+          {step === "prompt" && (
+            <div className="space-y-4">
+              <div className="rounded-lg border border-border bg-surface p-5 text-sm flex items-center justify-between">
+                <span className="text-neutral-400 font-medium">Selected Repository:</span>
+                <Link
+                  href={`/repositories/${owner}/${repo}`}
+                  className="text-white hover:underline font-mono font-semibold truncate max-w-[280px]"
+                >
+                  {thread.repoUrl}
+                </Link>
+              </div>
+              <PromptInput
+                value={prompt}
+                onChange={setPrompt}
+                onSubmit={handleStart}
+                loading={loading}
+              />
+            </div>
           )}
-          <DiffViewer patch={thread.diffPayload.patch} />
-          <div className="flex flex-col sm:flex-row gap-3 sticky bottom-4 bg-background/80 backdrop-blur-sm p-4 rounded-xl border border-border">
-            <Button onClick={handleApprove} loading={loading} className="flex-1">
-              <CheckCircle2 className="h-4 w-4" />
-              Approve Changes
-            </Button>
-            <Button
-              variant="danger"
-              className="flex-1"
-              onClick={() => {
-                setRejectType("diff");
-                setRejectOpen(true);
-              }}
-              disabled={loading}
-            >
-              <RotateCcw className="h-4 w-4" />
-              Reject & Regenerate
-            </Button>
-          </div>
-        </div>
-      )}
 
-      {step === "commit" && thread.result && (
-        <div className="max-w-2xl mx-auto space-y-6">
-          <CommitCard
-            result={thread.result}
-            repoName={thread.repoName}
-            author={user?.github_username}
-            timestamp={thread.updatedAt}
-          />
-          {thread.result.diff && <DiffViewer patch={thread.result.diff.patch} />}
-          {thread.pullRequestStatus === "created" && (
-            <Button className="w-full" onClick={() => router.push(`/threads/${threadId}/pr`)}>
+          {step === "execution" && (
+            <div className="rounded-lg border border-border bg-surface p-6">
+              <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-6">Workflow Execution</h3>
+              <ProgressTimeline
+                currentStage={stageInfo.currentStage}
+                stageStatuses={stageInfo.statuses}
+              />
+              {thread.executionStatus === "running" && (
+                <div className="mt-8 flex items-center justify-center gap-3 text-sm text-neutral-400 bg-black/40 border border-border py-4 rounded-lg">
+                  <span className="h-2 w-2 rounded-full bg-white animate-pulse-soft" />
+                  Engineering agent is working on the codebase...
+                </div>
+              )}
+              {thread.currentStep !== "execution" && thread.currentStep !== "prompt" && (
+                <div className="mt-8">
+                  <Button
+                    className="w-full py-3"
+                    onClick={() => router.push(`/threads/${threadId}/${thread.currentStep}`)}
+                  >
+                    Continue to {thread.currentStep}
+                  </Button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {step === "plan" && thread.plan && (
+            <div className="space-y-6">
+              {thread.planPayload?.message && (
+                <p className="text-sm text-neutral-400 leading-relaxed bg-surface border border-border p-4 rounded-lg">
+                  {thread.planPayload.message}
+                </p>
+              )}
+              <PlanCard plan={thread.plan} />
+              
+              <div className="flex flex-col sm:flex-row gap-4 p-5 rounded-lg border border-border bg-surface sticky bottom-4 shadow-xl">
+                <Button onClick={handleApprove} loading={loading} className="flex-1 py-3">
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Approve Plan
+                </Button>
+                <Button
+                  variant="danger"
+                  className="flex-1 py-3"
+                  onClick={() => {
+                    setRejectType("plan");
+                    setRejectOpen(true);
+                  }}
+                  disabled={loading}
+                >
+                  <XCircle className="h-4 w-4 mr-2" />
+                  Reject Plan
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === "diff" && thread.diffPayload && (
+            <div className="space-y-6">
+              {thread.diffPayload.message && (
+                <p className="text-sm text-neutral-400 leading-relaxed bg-surface border border-border p-4 rounded-lg">
+                  {thread.diffPayload.message}
+                </p>
+              )}
+              <DiffViewer patch={thread.diffPayload.patch} />
+              
+              <div className="flex flex-col sm:flex-row gap-4 p-5 rounded-lg border border-border bg-surface sticky bottom-4 shadow-xl">
+                <Button onClick={handleApprove} loading={loading} className="flex-1 py-3">
+                  <CheckCircle2 className="h-4 w-4 mr-2" />
+                  Approve Changes
+                </Button>
+                <Button
+                  variant="danger"
+                  className="flex-1 py-3"
+                  onClick={() => {
+                    setRejectType("diff");
+                    setRejectOpen(true);
+                  }}
+                  disabled={loading}
+                >
+                  <RotateCcw className="h-4 w-4 mr-2" />
+                  Reject & Regenerate
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {step === "commit" && thread.result && (
+            <div className="space-y-6">
+              <CommitCard
+                result={thread.result}
+                repoName={thread.repoName}
+                author={user?.github_username}
+                timestamp={thread.updatedAt}
+              />
+              {thread.result.diff && <DiffViewer patch={thread.result.diff.patch} />}
+            </div>
+          )}
+
+          {step === "pr" && thread.result && (
+            <div className="space-y-6">
+              <PullRequestCard result={thread.result} repoName={thread.repoName} />
+            </div>
+          )}
+        </div>
+
+        {/* Right Panel: Context Details, Lifecycle, Stats */}
+        <div className="xl:col-span-1 space-y-6">
+          {/* Workspace Details */}
+          <div className="rounded-lg border border-border bg-surface p-6">
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-4">Workspace Info</h3>
+            <div className="space-y-4 text-xs">
+              <div>
+                <span className="text-neutral-500 block font-medium mb-1">Target Repository</span>
+                <Link
+                  href={`/repositories/${owner}/${repo}`}
+                  className="font-mono font-semibold text-white hover:underline break-all"
+                >
+                  {thread.repoUrl}
+                </Link>
+              </div>
+              <div className="border-t border-border/60 pt-3.5">
+                <span className="text-neutral-500 block font-medium mb-1">GitHub Owner</span>
+                <span className="text-white font-semibold">{owner}</span>
+              </div>
+              <div className="border-t border-border/60 pt-3.5">
+                <span className="text-neutral-500 block font-medium mb-1">Target Branch</span>
+                <span className="text-white font-semibold font-mono">main</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Plan Status Tracker */}
+          <div className="rounded-lg border border-border bg-surface p-6">
+            <h3 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-4">Status & State</h3>
+            <div className="space-y-4 text-xs">
+              <div className="flex items-center justify-between">
+                <span className="text-neutral-400 font-medium">Step Phase</span>
+                <Badge variant="info" className="uppercase tracking-wider font-mono py-0">{step}</Badge>
+              </div>
+              <div className="flex items-center justify-between border-t border-border/40 pt-3">
+                <span className="text-neutral-400 font-medium">Agent Status</span>
+                <Badge
+                  variant={thread.executionStatus === "failed" ? "danger" : thread.executionStatus === "completed" ? "success" : "warning"}
+                  className="uppercase tracking-wider font-mono py-0"
+                >
+                  {thread.executionStatus}
+                </Badge>
+              </div>
+              {thread.result?.branch_name && (
+                <div className="border-t border-border/40 pt-3 space-y-1">
+                  <span className="text-neutral-400 font-medium block">Working Branch</span>
+                  <span className="text-white font-semibold font-mono block truncate">{thread.result.branch_name}</span>
+                </div>
+              )}
+            </div>
+          </div>
+          
+          {/* Action Triggers */}
+          {step === "commit" && thread.pullRequestStatus === "created" && (
+            <Button className="w-full py-3 font-semibold" onClick={() => router.push(`/threads/${threadId}/pr`)}>
               View Pull Request
             </Button>
           )}
-        </div>
-      )}
 
-      {step === "pr" && thread.result && (
-        <div className="max-w-2xl mx-auto space-y-6">
-          <PullRequestCard result={thread.result} repoName={thread.repoName} />
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/dashboard" className="flex-1">
-              <Button variant="secondary" className="w-full">
-                Back to Dashboard
-              </Button>
-            </Link>
-            <Link href={`/repositories/${owner}/${repo}`} className="flex-1">
-              <Button variant="ghost" className="w-full">
-                Repository Workspace
-              </Button>
-            </Link>
-          </div>
+          {step === "pr" && (
+            <div className="space-y-3">
+              <Link href="/dashboard" className="block w-full">
+                <Button variant="secondary" className="w-full py-3 font-semibold">
+                  Back to Dashboard
+                </Button>
+              </Link>
+              <Link href={`/repositories/${owner}/${repo}`} className="block w-full">
+                <Button variant="ghost" className="w-full py-3 font-semibold">
+                  Repository Workspace
+                </Button>
+              </Link>
+            </div>
+          )}
         </div>
-      )}
+
+      </div>
 
       <ConfirmDialog
         open={rejectOpen}
@@ -291,7 +403,7 @@ export default function ThreadStepContent({
             onChange={(e) => setFeedback(e.target.value)}
             placeholder="Describe what should change…"
             rows={3}
-            className="w-full rounded-lg border border-border bg-surface p-3 text-sm focus:outline-none focus:ring-2 focus:ring-accent/50 shadow-xl"
+            className="w-full rounded-lg border border-border bg-surface p-4 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-500 shadow-2xl leading-relaxed"
           />
         </div>
       )}

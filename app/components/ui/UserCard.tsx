@@ -10,39 +10,39 @@ type UserCardProps = {
 
 export default function UserCard({ user }: UserCardProps) {
   return (
-    <div className="w-full rounded-xl border border-neutral-200 bg-white p-6 shadow-sm">
+    <div className="w-full rounded-lg border border-border bg-surface p-6">
       <div className="flex items-center gap-4">
         <img
           src={user.avatar}
           alt={user.username}
-          className="h-16 w-16 rounded-full border"
+          className="h-16 w-16 rounded-full border border-border"
         />
 
         <div>
-          <h2 className="text-lg font-semibold text-neutral-900">
+          <h2 className="text-lg font-semibold text-white">
             {user.username}
           </h2>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-sm text-neutral-400">
             Connected GitHub Account
           </p>
         </div>
       </div>
 
-      <div className="mt-6 flex justify-between rounded-lg bg-neutral-100 p-4">
+      <div className="mt-6 flex justify-between rounded-lg bg-surface-elevated border border-border p-4">
         <div>
-          <p className="text-2xl font-bold">{user.repositories}</p>
-          <p className="text-sm text-neutral-500">
+          <p className="text-2xl font-bold text-white">{user.repositories}</p>
+          <p className="text-xs text-neutral-500 uppercase tracking-wider mt-1">
             Repositories
           </p>
         </div>
 
-        <div>
-          <p className="text-2xl font-bold text-green-600">
+        <div className="text-right">
+          <p className="text-2xl font-bold text-white">
             Connected
           </p>
 
-          <p className="text-sm text-neutral-500">
+          <p className="text-xs text-neutral-500 uppercase tracking-wider mt-1">
             GitHub App
           </p>
         </div>

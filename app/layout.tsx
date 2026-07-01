@@ -4,7 +4,7 @@ import { AuthProvider } from "@/app/contexts/AuthContext";
 import { ToastProvider } from "@/app/contexts/ToastContext";
 
 export const metadata: Metadata = {
-  title: "Nascent — AI Engineering Dashboard",
+  title: "NascentAI",
   description: "AI-powered code generation and pull request workflow",
 };
 

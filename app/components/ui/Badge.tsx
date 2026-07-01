@@ -9,12 +9,12 @@ interface BadgeProps {
 }
 
 const variants: Record<BadgeVariant, string> = {
-  default: "bg-surface-elevated text-foreground border-border",
-  success: "bg-success-bg text-success border-success/30",
-  danger: "bg-danger-bg text-danger border-danger/30",
-  warning: "bg-warning/10 text-warning border-warning/30",
-  info: "bg-accent/10 text-accent border-accent/30",
-  muted: "bg-border-muted text-muted border-border",
+  default: "bg-surface text-neutral-200 border-border",
+  success: "bg-white text-black border-white font-medium",
+  danger: "bg-transparent text-neutral-400 border-border border-dashed",
+  warning: "bg-neutral-900 text-neutral-300 border-border",
+  info: "bg-neutral-900 text-neutral-200 border-border",
+  muted: "bg-transparent text-muted border-border",
 };
 
 export default function Badge({ children, variant = "default", className }: BadgeProps) {

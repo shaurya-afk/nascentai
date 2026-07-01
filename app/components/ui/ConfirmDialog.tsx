@@ -29,11 +29,11 @@ export default function ConfirmDialog({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-      <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={onCancel} />
-      <div className="relative w-full max-w-md rounded-xl border border-border bg-surface p-6 shadow-2xl animate-fade-in">
-        <h3 className="text-lg font-semibold">{title}</h3>
-        {description && <p className="mt-2 text-sm text-muted">{description}</p>}
-        <div className="mt-6 flex flex-col-reverse sm:flex-row sm:justify-end gap-2">
+      <div className="absolute inset-0 bg-black/80 backdrop-blur-xs" onClick={onCancel} />
+      <div className="relative w-full max-w-md rounded-lg border border-border bg-surface p-8 shadow-2xl animate-fade-in">
+        <h3 className="text-xl font-bold tracking-tight text-white">{title}</h3>
+        {description && <p className="mt-3 text-sm leading-relaxed text-neutral-400">{description}</p>}
+        <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
           <Button variant="ghost" onClick={onCancel} disabled={loading}>
             {cancelLabel}
           </Button>

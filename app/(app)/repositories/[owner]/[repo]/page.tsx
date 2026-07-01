@@ -3,7 +3,7 @@
 import { use, useMemo } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { GitBranch, Plus, MessageSquare, BarChart3 } from "lucide-react";
+import { GitBranch, Plus, MessageSquare, BarChart3, ArrowLeft } from "lucide-react";
 import Header from "@/app/components/layout/Header";
 import Button from "@/app/components/ui/Button";
 import Badge from "@/app/components/ui/Badge";
@@ -56,45 +56,47 @@ export default function RepositoryOverviewPage({
         title={fullName}
         description={repoInfo.url}
         actions={
-          <Button onClick={startNewThread}>
-            <Plus className="h-4 w-4" />
+          <Button onClick={startNewThread} variant="primary">
+            <Plus className="h-4 w-4 mr-1.5" />
             New Thread
           </Button>
         }
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-8">
-        <div className="lg:col-span-2 rounded-xl border border-border bg-surface p-5">
-          <h2 className="text-sm font-semibold mb-4">Repository Information</h2>
-          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10">
+        {/* Info Card */}
+        <div className="lg:col-span-2 rounded-lg border border-border bg-surface p-6">
+          <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest mb-6">Repository Details</h2>
+          <dl className="grid grid-cols-1 sm:grid-cols-2 gap-6 text-sm">
             <div>
-              <dt className="text-muted text-xs">Owner</dt>
-              <dd className="font-medium mt-1">{owner}</dd>
+              <dt className="text-neutral-500 text-[10px] uppercase tracking-wider font-semibold">Owner</dt>
+              <dd className="font-semibold text-white mt-1.5">{owner}</dd>
             </div>
             <div>
-              <dt className="text-muted text-xs">Repository</dt>
-              <dd className="font-medium mt-1">{repo}</dd>
+              <dt className="text-neutral-500 text-[10px] uppercase tracking-wider font-semibold">Repository</dt>
+              <dd className="font-semibold text-white mt-1.5">{repo}</dd>
             </div>
             <div>
-              <dt className="text-muted text-xs">Default Branch</dt>
-              <dd className="font-medium mt-1 flex items-center gap-1">
-                <GitBranch className="h-3.5 w-3.5 text-muted" />
+              <dt className="text-neutral-500 text-[10px] uppercase tracking-wider font-semibold">Default Branch</dt>
+              <dd className="font-semibold text-white mt-1.5 flex items-center gap-1.5">
+                <GitBranch className="h-3.5 w-3.5 text-neutral-500" />
                 {repoInfo.defaultBranch ?? "main"}
               </dd>
             </div>
             <div>
-              <dt className="text-muted text-xs">Status</dt>
-              <dd className="mt-1"><Badge variant="success">Connected</Badge></dd>
+              <dt className="text-neutral-500 text-[10px] uppercase tracking-wider font-semibold">Status</dt>
+              <dd className="mt-1.5"><Badge variant="success">Connected</Badge></dd>
             </div>
           </dl>
         </div>
 
-        <div className="rounded-xl border border-border bg-surface p-5">
-          <div className="flex items-center gap-2 mb-4">
-            <BarChart3 className="h-4 w-4 text-muted" />
-            <h2 className="text-sm font-semibold">Statistics</h2>
+        {/* Stats Card */}
+        <div className="rounded-lg border border-border bg-surface p-6">
+          <div className="flex items-center gap-2 mb-6">
+            <BarChart3 className="h-4 w-4 text-neutral-400" />
+            <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Statistics</h2>
           </div>
-          <div className="space-y-3">
+          <div className="space-y-4">
             <StatRow label="Threads" value={stats.threadCount} />
             <StatRow label="Pull Requests" value={stats.pullRequestCount} />
             <StatRow label="Last Activity" value={stats.lastActivity ? new Date(stats.lastActivity).toLocaleDateString() : "—"} />
@@ -102,20 +104,21 @@ export default function RepositoryOverviewPage({
         </div>
       </div>
 
-      <section>
-        <div className="flex items-center gap-2 mb-4">
-          <MessageSquare className="h-4 w-4 text-muted" />
-          <h2 className="text-sm font-medium text-muted uppercase tracking-wider">Threads</h2>
+      {/* Threads Section */}
+      <section className="mb-10">
+        <div className="flex items-center gap-2.5 mb-6">
+          <MessageSquare className="h-4 w-4 text-neutral-400" />
+          <h2 className="text-xs font-semibold text-neutral-500 uppercase tracking-widest">Active Threads</h2>
         </div>
         {repoThreads.length === 0 ? (
           <EmptyState
-            title="No threads for this repository"
+            title="No active threads"
             description="Start a new thread to describe changes you want to make."
             actionLabel="Start New Thread"
             onAction={startNewThread}
           />
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {repoThreads.map((t) => (
               <ThreadCard key={t.id} thread={t} />
             ))}
@@ -123,9 +126,9 @@ export default function RepositoryOverviewPage({
         )}
       </section>
 
-      <div className="mt-6">
-        <Link href="/repositories" className="text-sm text-accent hover:underline">
-          ← Back to repositories
+      <div className="mt-8 border-t border-border/40 pt-6">
+        <Link href="/repositories" className="text-xs font-semibold text-neutral-400 hover:text-white flex items-center gap-2 transition-colors uppercase tracking-wider">
+          <ArrowLeft className="h-4 w-4" /> Back to repositories
         </Link>
       </div>
     </>
@@ -134,9 +137,9 @@ export default function RepositoryOverviewPage({
 
 function StatRow({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="flex items-center justify-between text-sm">
-      <span className="text-muted">{label}</span>
-      <span className="font-medium">{value}</span>
+    <div className="flex items-center justify-between text-sm py-1">
+      <span className="text-neutral-400 font-medium">{label}</span>
+      <span className="font-semibold text-white">{value}</span>
     </div>
   );
 }

@@ -23,8 +23,8 @@ export default function ThreadStepNav({ threadId, currentStep }: ThreadStepNavPr
   const currentIdx = STEPS.findIndex((s) => s.id === currentStep);
 
   return (
-    <nav className="mb-6 overflow-x-auto">
-      <ol className="flex items-center gap-1 min-w-max pb-1">
+    <nav className="mb-8 overflow-x-auto">
+      <ol className="flex items-center gap-2 min-w-max pb-1">
         {STEPS.map((step, idx) => {
           const isComplete = idx < currentIdx;
           const isCurrent = step.id === currentStep;
@@ -35,33 +35,33 @@ export default function ThreadStepNav({ threadId, currentStep }: ThreadStepNavPr
               {idx > 0 && (
                 <div
                   className={cn(
-                    "h-px w-4 sm:w-8 mx-1",
-                    isComplete ? "bg-success" : "bg-border"
+                    "h-px w-3 sm:w-6 mx-1 bg-border",
+                    isComplete && "bg-neutral-600"
                   )}
                 />
               )}
               <Link
                 href={`/threads/${threadId}/${step.id}`}
                 className={cn(
-                  "flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium transition-colors sm:px-3 sm:text-sm",
-                  isCurrent && "bg-accent/10 text-accent ring-1 ring-accent/30",
-                  isComplete && "text-success hover:bg-success/5",
-                  isFuture && "text-muted pointer-events-none"
+                  "flex items-center gap-2.5 rounded-lg border border-border px-3.5 py-2 text-[10px] font-bold uppercase tracking-widest transition-all duration-200",
+                  isCurrent && "bg-white text-black border-white shadow-sm",
+                  isComplete && "bg-neutral-900 text-neutral-300 border-border hover:bg-neutral-850",
+                  isFuture && "text-neutral-500 bg-neutral-950/40 pointer-events-none"
                 )}
               >
                 {isComplete ? (
-                  <Check className="h-3.5 w-3.5" />
+                  <Check className="h-3.5 w-3.5 text-neutral-400" />
                 ) : (
                   <span
                     className={cn(
-                      "flex h-5 w-5 items-center justify-center rounded-full text-[10px]",
-                      isCurrent ? "bg-accent text-white" : "bg-surface-elevated text-muted"
+                      "flex h-4 w-4 items-center justify-center rounded-full text-[9px] font-mono",
+                      isCurrent ? "bg-black text-white" : "bg-neutral-900 text-neutral-500 border border-border"
                     )}
                   >
                     {idx + 1}
                   </span>
                 )}
-                <span className="hidden sm:inline">{step.label}</span>
+                <span>{step.label}</span>
               </Link>
             </li>
           );
