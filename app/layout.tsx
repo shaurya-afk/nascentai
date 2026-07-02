@@ -7,6 +7,29 @@ import { Analytics } from "@vercel/analytics/next"
 export const metadata: Metadata = {
   title: "NascentAI",
   description: "AI-powered code generation and pull request workflow",
+  metadataBase: new URL("https://nascentai.vercel.app/"),
+  openGraph:{
+    title: "NascentAI",
+    description: "Autonomous AI coding agent.",
+    url: "https://nascentai.vercel.app/",
+    siteName: "NascentAI",
+    images: [
+      {
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Nascent",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter:{
+    card: "summary_large_image",
+    title: "NascentAI",
+    description: "Autonomous AI coding agent.",
+    images: ["/og-image.png"],
+    },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
