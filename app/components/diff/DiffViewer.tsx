@@ -101,8 +101,8 @@ function DiffFileContent({ file }: { file: ParsedDiffFile }) {
                     key={`${hi}-${li}`}
                     className={cn(
                       "group hover:bg-neutral-900/30",
-                      line.type === "addition" && "bg-neutral-800/40",
-                      line.type === "deletion" && "bg-neutral-950/70"
+                      line.type === "addition" && "bg-emerald-950/20",
+                      line.type === "deletion" && "bg-red-950/20"
                     )}
                   >
                     {/* Line numbers */}
@@ -117,9 +117,9 @@ function DiffFileContent({ file }: { file: ParsedDiffFile }) {
                     <td className="px-5 py-0 whitespace-pre">
                       <span
                         className={cn(
-                          "font-mono text-xs text-neutral-300",
-                          line.type === "addition" && "text-white font-semibold",
-                          line.type === "deletion" && "text-neutral-500 line-through"
+                          "font-mono text-xs text-neutral-350",
+                          line.type === "addition" && "text-emerald-400 font-semibold",
+                          line.type === "deletion" && "text-red-400 line-through"
                         )}
                       >
                         {line.type === "addition" ? "+" : line.type === "deletion" ? "−" : " "}

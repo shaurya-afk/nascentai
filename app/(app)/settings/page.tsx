@@ -1,6 +1,6 @@
 "use client";
 
-import { FolderGit2, CheckCircle2, AlertTriangle, User, Palette, Sliders, ShieldAlert } from "lucide-react";
+import { FolderGit2, CheckCircle2, AlertTriangle, User, Sliders, ShieldAlert } from "lucide-react";
 import Header from "@/app/components/layout/Header";
 import Button from "@/app/components/ui/Button";
 import Badge from "@/app/components/ui/Badge";
@@ -94,24 +94,6 @@ export default function SettingsPage() {
                 <p className="text-xs text-neutral-500 mt-1">Include detailed library imports and dependency structure in AI plans.</p>
               </div>
               <span className="text-xs font-mono text-neutral-400 bg-neutral-900 border border-border px-2.5 py-1 rounded">Normal</span>
-            </div>
-          </div>
-        </section>
-
-        {/* Appearance Section */}
-        <section className="rounded-lg border border-border bg-surface p-6">
-          <div className="flex items-center gap-2.5 mb-6 border-b border-border/60 pb-3">
-            <Palette className="h-4.5 w-4.5 text-neutral-400" />
-            <h2 className="text-sm font-semibold text-white uppercase tracking-wider">Appearance</h2>
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex items-center justify-between text-sm py-1.5">
-              <div>
-                <p className="text-sm font-semibold text-white">Color Theme</p>
-                <p className="text-xs text-neutral-500 mt-1">Select your preferred graphical interface theme.</p>
-              </div>
-              <span className="text-xs font-mono text-white bg-black border border-neutral-400 px-2.5 py-1 rounded">Monochromatic Dark</span>
             </div>
           </div>
         </section>

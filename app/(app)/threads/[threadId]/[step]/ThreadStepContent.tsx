@@ -99,6 +99,17 @@ export default function ThreadStepContent({
     }
   };
 
+  const handleRetry = () => {
+    if (thread) {
+      threadStorageService.save({
+        ...thread,
+        error: undefined,
+        executionStatus: "pending",
+      });
+      refresh();
+    }
+  };
+
   if (!thread) {
     return (
       <>
@@ -125,9 +136,9 @@ export default function ThreadStepContent({
 
       <ThreadStepNav threadId={threadId} currentStep={step} />
 
-      {thread.error && step !== "prompt" && (
+      {thread.error && (
         <div className="mb-6">
-          <ErrorState message={thread.error} onRetry={refresh} />
+          <ErrorState message={thread.error} onRetry={handleRetry} />
         </div>
       )}
 
