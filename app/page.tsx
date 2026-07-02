@@ -55,6 +55,9 @@ export default function HomePage() {
           <p className="mt-4 text-base md:text-lg text-neutral-400 leading-relaxed font-normal">
             Analyze an existing repository, generate an engineering implementation plan, review every change, generate production-ready code, and automatically open a Pull Request.
           </p>
+          <p className="mt-4 text-sm text-neutral-500 leading-relaxed font-medium italic">
+            Still in development phase.
+          </p>
         </div>
 
         {/* Primary CTA */}
@@ -163,7 +166,7 @@ export default function HomePage() {
         <div className="mx-auto flex max-w-5xl flex-col items-center justify-between gap-6 px-6 text-xs text-neutral-500 md:flex-row">
           <div className="flex items-center gap-2.5">
             <img src="/lotus.svg" alt="Lotus" className="h-5 w-5 opacity-60" />
-            <span>© {new Date().getFullYear()} Nascent. All rights reserved.</span>
+            <span>© {new Date().getFullYear()} Nascent. Still in development phase.</span>
           </div>
 
           <div className="flex gap-8">
