@@ -1,7 +1,7 @@
 # NascentAI
 
 <p align="center">
-  <img src="../nascent-fe/public/og-image.png" alt="Nascent Banner" width="100%">
+  <img src="./public/banner.png" alt="Nascent Banner" width="100%">
 </p>
 
 <h3 align="center">
@@ -379,16 +379,11 @@ http://localhost:3000
 
 ---
 
-<!-- # Screenshots
+# Screenshots
 
-> Coming Soon
-
-- Landing Page
-- Dashboard
-- Repository Selection
-- Planning Interface
-- Git Diff Viewer
-- Pull Request Summary -->
+<p align="center">
+  <img src="./public/screenshot.png" alt="Nascent Banner" width="100%">
+</p>
 
 ---
 
@@ -437,5 +432,5 @@ See the `LICENSE` file for more information.
 ---
 
 <p align="center">
-Built to make autonomous software engineering accessible through a modern developer experience.
+Built to make autonomous software engineering accessible through a modern developer experience 💓.
 </p>
