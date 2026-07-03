@@ -10,6 +10,8 @@ interface ConfirmDialogProps {
   cancelLabel?: string;
   variant?: "danger" | "primary";
   loading?: boolean;
+  confirmDisabled?: boolean;
+  children?: React.ReactNode;
   onConfirm: () => void;
   onCancel: () => void;
 }
@@ -22,6 +24,8 @@ export default function ConfirmDialog({
   cancelLabel = "Cancel",
   variant = "primary",
   loading,
+  confirmDisabled,
+  children,
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
@@ -33,6 +37,7 @@ export default function ConfirmDialog({
       <div className="relative w-full max-w-md rounded-lg border border-border bg-surface p-8 shadow-2xl animate-fade-in">
         <h3 className="text-xl font-bold tracking-tight text-white">{title}</h3>
         {description && <p className="mt-3 text-sm leading-relaxed text-neutral-400">{description}</p>}
+        {children}
         <div className="mt-8 flex flex-col-reverse sm:flex-row sm:justify-end gap-3">
           <Button variant="ghost" onClick={onCancel} disabled={loading}>
             {cancelLabel}
@@ -41,6 +46,7 @@ export default function ConfirmDialog({
             variant={variant === "danger" ? "danger" : "primary"}
             onClick={onConfirm}
             loading={loading}
+            disabled={confirmDisabled}
           >
             {confirmLabel}
           </Button>

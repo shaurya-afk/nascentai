@@ -255,6 +255,7 @@ export default function ThreadStepContent({
                   className="flex-1 py-3"
                   onClick={() => {
                     setRejectType("plan");
+                    setFeedback("");
                     setRejectOpen(true);
                   }}
                   disabled={loading}
@@ -285,6 +286,7 @@ export default function ThreadStepContent({
                   className="flex-1 py-3"
                   onClick={() => {
                     setRejectType("diff");
+                    setFeedback("");
                     setRejectOpen(true);
                   }}
                   disabled={loading}
@@ -403,21 +405,21 @@ export default function ThreadStepContent({
         confirmLabel="Submit Feedback"
         variant="danger"
         loading={loading}
+        confirmDisabled={!feedback.trim()}
         onConfirm={handleReject}
-        onCancel={() => setRejectOpen(false)}
-      />
-
-      {rejectOpen && (
-        <div className="fixed inset-x-4 bottom-24 z-40 mx-auto max-w-lg">
-          <textarea
-            value={feedback}
-            onChange={(e) => setFeedback(e.target.value)}
-            placeholder="Describe what should change…"
-            rows={3}
-            className="w-full rounded-lg border border-border bg-surface p-4 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-500 shadow-2xl leading-relaxed"
-          />
-        </div>
-      )}
+        onCancel={() => {
+          setRejectOpen(false);
+          setFeedback("");
+        }}
+      >
+        <textarea
+          value={feedback}
+          onChange={(e) => setFeedback(e.target.value)}
+          placeholder="Describe what should change…"
+          rows={3}
+          className="mt-4 w-full rounded-lg border border-border bg-surface p-4 text-sm text-white placeholder-neutral-500 focus:outline-none focus:border-neutral-500 leading-relaxed"
+        />
+      </ConfirmDialog>
     </>
   );
 }
