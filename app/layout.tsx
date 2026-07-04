@@ -8,28 +8,29 @@ export const metadata: Metadata = {
   title: "NascentAI",
   description: "AI-powered code generation and pull request workflow",
   metadataBase: new URL("https://nascentai.vercel.app/"),
-  openGraph:{
+  openGraph: {
     title: "NascentAI",
-    description: "Autonomous AI coding agent.",
-    url: "https://nascentai.vercel.app/",
+    description: "Repository-aware AI software engineer for GitHub.",
+    url: "https://nascentai.vercel.app",
     siteName: "NascentAI",
     images: [
       {
-        url: "/og-image.png",
+        url: "/og-image",
         width: 1200,
         height: 630,
-        alt: "Nascent",
+        alt: "NascentAI",
       },
     ],
     locale: "en_US",
     type: "website",
   },
-  twitter:{
+
+  twitter: {
     card: "summary_large_image",
     title: "NascentAI",
-    description: "Autonomous AI coding agent.",
-    images: ["/og-image.png"],
-    },
+    description: "Repository-aware AI software engineer for GitHub.",
+    images: ["/og-image"],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
