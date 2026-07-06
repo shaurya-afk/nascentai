@@ -1,12 +1,139 @@
 // page.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
 import { authService } from "@/app/services/auth.service";
+import { agentService } from "@/app/services/agent.service";
 import GitHubLoginButton from "@/app/components/ui/LoginButton";
-import Skeleton from "@/app/components/ui/Skeleton";
+
+type BackendStatus = "checking" | "online" | "offline";
+
+const HEALTH_TIMEOUT_MS = 5000;
+const OFFLINE_RETRY_MS = 10000;
+const ONLINE_RECHECK_MS = 60000;
+const LOGIN_POLL_MS = 2000;
+
+function healthCheckWithTimeout(): Promise<boolean> {
+  const timeout = new Promise<boolean>((resolve) => {
+    setTimeout(() => resolve(false), HEALTH_TIMEOUT_MS);
+  });
+  return Promise.race([agentService.healthCheck(), timeout]);
+}
+
+function useBackendStatus() {
+  const [status, setStatus] = useState<BackendStatus>("checking");
+  const statusRef = useRef<BackendStatus>("checking");
+
+  const setStatusSynced = useCallback((next: BackendStatus) => {
+    statusRef.current = next;
+    setStatus(next);
+  }, []);
+
+  useEffect(() => {
+    let mounted = true;
+
+    const probe = async () => {
+      if (!mounted) return;
+      setStatusSynced("checking");
+      const ok = await healthCheckWithTimeout();
+      if (!mounted) return;
+      setStatusSynced(ok ? "online" : "offline");
+    };
+
+    probe();
+
+    const offlineInterval = setInterval(() => {
+      if (statusRef.current === "offline") probe();
+    }, OFFLINE_RETRY_MS);
+
+    const onlineInterval = setInterval(async () => {
+      if (statusRef.current !== "online") return;
+      const ok = await healthCheckWithTimeout();
+      if (!mounted) return;
+      if (!ok) setStatusSynced("offline");
+    }, ONLINE_RECHECK_MS);
+
+    return () => {
+      mounted = false;
+      clearInterval(offlineInterval);
+      clearInterval(onlineInterval);
+    };
+  }, [setStatusSynced]);
+
+  const waitForOnline = useCallback(async () => {
+    while (statusRef.current !== "online") {
+      setStatusSynced("checking");
+      const ok = await healthCheckWithTimeout();
+      if (ok) {
+        setStatusSynced("online");
+        return;
+      }
+      setStatusSynced("offline");
+      await new Promise((resolve) => setTimeout(resolve, LOGIN_POLL_MS));
+    }
+  }, [setStatusSynced]);
+
+  return { status, waitForOnline };
+}
+
+const STATUS_COLORS: Record<BackendStatus, { ping: string; core: string; label: string }> = {
+  checking: { ping: "bg-amber-400/50", core: "bg-amber-400", label: "Backend starting" },
+  online: { ping: "bg-emerald-400/50", core: "bg-emerald-400", label: "Backend online" },
+  offline: { ping: "bg-red-400/50", core: "bg-red-400", label: "Backend offline" },
+};
+
+function BackendStatusDot({ status }: { status: BackendStatus }) {
+  const { ping, core, label } = STATUS_COLORS[status];
+  return (
+    <span className="relative flex h-2 w-2" aria-label={label}>
+      <span className={`absolute inline-flex h-full w-full animate-ping rounded-full ${ping} opacity-75`} />
+      <span className={`relative inline-flex h-2 w-2 rounded-full ${core}`} />
+    </span>
+  );
+}
+
+function ChatGPTThrobber() {
+  return (
+    <span className="inline-flex items-center gap-1">
+      {[0, 1, 2].map((i) => (
+        <span
+          key={i}
+          className="h-2 w-2 rounded-full bg-neutral-400"
+          style={{
+            animation: "chatgptDot 1.4s ease-in-out infinite",
+            animationDelay: `${i * 0.16}s`,
+          }}
+        />
+      ))}
+    </span>
+  );
+}
+
+function GitHubLoginButtonWithThrobber({
+  onClick,
+  className,
+  loginPending,
+}: {
+  onClick: () => void;
+  className?: string;
+  loginPending: boolean;
+}) {
+  return (
+    <div className="relative inline-flex">
+      <GitHubLoginButton
+        onClick={onClick}
+        className={`${className ?? ""} ${loginPending ? "opacity-0" : ""}`}
+      />
+      {loginPending && (
+        <div className="absolute inset-0 flex items-center justify-center rounded-lg bg-white">
+          <ChatGPTThrobber />
+        </div>
+      )}
+    </div>
+  );
+}
 
 function useReveal<T extends HTMLElement>() {
   const ref = useRef<T>(null);
@@ -79,9 +206,19 @@ const FEATURES = [
 export default function HomePage() {
   const { user, loading } = useAuth();
   const router = useRouter();
+  const { status: backendStatus, waitForOnline } = useBackendStatus();
   const steps = useReveal<HTMLDivElement>();
   const features = useReveal<HTMLDivElement>();
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [loginPending, setLoginPending] = useState(false);
+
+  const imgRef = useRef<HTMLImageElement>(null);
+
+  useEffect(() => {
+    if (imgRef.current?.complete){
+      setImageLoaded(true);
+    }
+  }, []);
 
   useEffect(() => {
     if (!loading && user) {
@@ -89,13 +226,16 @@ export default function HomePage() {
     }
   }, [loading, user, router]);
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-black">
-        <Skeleton className="h-10 w-40" />
-      </div>
-    );
-  }
+  const handleGitHubLogin = async () => {
+    if (loginPending) return;
+    setLoginPending(true);
+    try {
+      await waitForOnline();
+      authService.login();
+    } finally {
+      setLoginPending(false);
+    }
+  };
 
   return (
     <main className="min-h-screen overflow-x-hidden bg-black text-white selection:bg-white/20 selection:text-white">
@@ -115,6 +255,7 @@ export default function HomePage() {
           <span className="font-display text-sm font-semibold tracking-tight text-white/90">
             Nascent
           </span>
+          <BackendStatusDot status={backendStatus} />
         </div>
         <a
           href="https://github.com/shaurya-afk/nascent"
@@ -163,6 +304,7 @@ export default function HomePage() {
           >
             <img
               src="/hero-lotus.png"
+              ref={imgRef}
               alt=""
               onLoad={() => setImageLoaded(true)}
               className={`absolute inset-0 h-full w-full object-cover object-center transition-all duration-1000 ${
@@ -262,8 +404,9 @@ export default function HomePage() {
             className="mt-10 flex flex-col items-center gap-4"
             style={{ animation: "fadeUp 0.7s ease-out 0.4s both" }}
           >
-            <GitHubLoginButton
-              onClick={() => authService.login()}
+            <GitHubLoginButtonWithThrobber
+              onClick={handleGitHubLogin}
+              loginPending={loginPending}
               className="min-w-[280px] shadow-2xl shadow-white/5"
             />
             <p className="flex items-center gap-2 font-mono text-[11px] text-white/30 tracking-wide">
@@ -408,8 +551,9 @@ export default function HomePage() {
             Connect a repository and let Nascent show you what it can plan.
           </p>
           <div className="mt-10 flex flex-col items-center gap-4">
-            <GitHubLoginButton
-              onClick={() => authService.login()}
+            <GitHubLoginButtonWithThrobber
+              onClick={handleGitHubLogin}
+              loginPending={loginPending}
               className="min-w-[280px] shadow-2xl shadow-white/5"
             />
             <p className="font-mono text-[11px] tracking-wide text-white/25">
@@ -443,6 +587,20 @@ export default function HomePage() {
           </div>
         </div>
       </footer>
+      <style jsx global>{`
+        @keyframes chatgptDot {
+          0%,
+          80%,
+          100% {
+            opacity: 0.4;
+            transform: translateY(0);
+          }
+          40% {
+            opacity: 1;
+            transform: translateY(-4px);
+          }
+        }
+      `}</style>
     </main>
   );
 }
